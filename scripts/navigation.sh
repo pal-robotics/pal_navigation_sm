@@ -43,6 +43,15 @@ fi
 #  rm -rf $MAP
 #fi
 
+if [ $# -lt 7 ]; then
+  TF_PREFIX=
+  MULTI="false"
+else
+  TF_PREFIX=$7
+  MULTI="true"
+fi
+
+# Ensure target directory exists
 if [ ! -d "$MAP" ]; then
   mkdir -p $MAP
   if [ $? -ne 0 ]; then
@@ -52,7 +61,7 @@ if [ ! -d "$MAP" ]; then
 fi
 
 # Run localization/mapping
-roslaunch ${ROBOT}_2dnav $STATE.launch localization:=$LOCALIZATION mapping:=$MAPPING map:=$MAP
+roslaunch ${ROBOT}_2dnav $STATE.launch localization:=$LOCALIZATION mapping:=$MAPPING map:=$MAP multiple:=$MULTI tf_prefix:=$TF_PREFIX
 
 
 
