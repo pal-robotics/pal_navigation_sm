@@ -9,10 +9,10 @@
 
   <!-- Setup map -->
   <node name="map_setup" pkg="pal_navigation_sm" type="map_setup.py">
-    <param name="map" value="$(env HOME)/.pal/tiago_maps/config"/>
+    <param name="map" value="$(arg map)"/>
   </node>
 
   <!-- Run the map server -->
-  <node name="map_server" pkg="map_server" type="map_server" args="$(env HOME)/.pal/tiago_maps/config/map.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map)/map.yaml"/>
 
 </launch>
