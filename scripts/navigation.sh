@@ -44,11 +44,21 @@ fi
 #fi
 
 if [ $# -lt 7 ]; then
-  TF_PREFIX=
   MULTI="false"
-else
-  TF_PREFIX=$7
-  MULTI="true"
+  TF_PREFIX=""
+else 
+  if [ "$7" = "true" ]; then
+    if [ $# -lt 8 ]; then
+      echo "If MULTI is true I need the tf_prefix"
+      exit 1
+    else
+      MULTI="true"
+      TF_PREFIX=$8
+    fi
+  else 
+    MULTI="false"
+    TF_PREFIX=""
+  fi
 fi
 
 # Ensure target directory exists
