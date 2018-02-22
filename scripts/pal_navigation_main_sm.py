@@ -42,10 +42,13 @@ class MapsManagerService():
 
     def _save_map_request(self, req):
 
+        if req.directory:
+            map_path = req.directory
+        else:
+            map_path = os.path.expanduser('~') + '/.pal/' + self._robot + '_maps/'
         map_name = 'config'
-        map_path = os.path.expanduser('~') + '/.pal/' + self._robot + '_maps/'
 
-        shutil.rmtree(map_path+map_name)
+        shutil.rmtree(map_path+map_name, ignore_errors=True)
         os.makedirs(map_path+map_name)
 
         rospy.logdebug("Saving map with map_name '" + map_name + "' and map_path '" + map_path + "'")
@@ -105,7 +108,7 @@ def main():
     rospy.init_node('navigation_sm', log_level=rospy.ERROR)
 
     MapsManagerService()
-   
+
     rospy.spin()
 
 
