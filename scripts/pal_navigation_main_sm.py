@@ -43,7 +43,7 @@ class MapsManagerService():
     def _save_map_request(self, req):
 
         if req.directory:
-            map_path = req.directory
+            map_path = req.directory + "/"
         else:
             map_path = os.path.expanduser('~') + '/.pal/' + self._robot + '_maps/'
         map_name = 'config'
