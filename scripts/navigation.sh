@@ -70,6 +70,10 @@ if [ ! -d "$MAP" ]; then
   fi
 fi
 
+if [ ! -f "$HOME/.pal/pose.yaml" ]; then
+    rosrun pal_navigation_sm cp_pose_to_home.sh
+fi
+
 # Run localization/mapping
 roslaunch ${ROBOT}_2dnav $STATE.launch localization:=$LOCALIZATION mapping:=$MAPPING map:=$MAP multiple:=$MULTI tf_prefix:=$TF_PREFIX
 
