@@ -19,6 +19,8 @@ import rospy
 import rosparam
 import os
 import shutil
+import subprocess
+import time
 
 import rospkg
 from pal_navigation_msgs.srv import SaveMap, SaveMapResponse
@@ -38,20 +40,29 @@ class MapsManagerService():
     def __init__(self):
 
         self._save_map_srv = rospy.Service('pal_map_manager/save_map', SaveMap, self._save_map_request)
-        self._robot = rospy.get_param("~robot", "tiago")
+        self._robot = rospy.get_param("/pal_robot_info/type", "tiago")
 
     def _save_map_request(self, req):
 
+        rospy.logerr("robot: {}".format(self._robot))
+
+        map_path = os.path.expanduser('~') + '/.pal/' + self._robot + '_maps/'
+
         if req.directory:
-            map_path = req.directory + "/"
+            map_name = req.directory
         else:
-            map_path = os.path.expanduser('~') + '/.pal/' + self._robot + '_maps/'
-        map_name = 'config'
+            timestamp = time.localtime()
+            map_name = time.strftime('%F_%H%M%S', timestamp)
 
-        shutil.rmtree(map_path+map_name, ignore_errors=True)
-        os.makedirs(map_path+map_name)
+        full_map_path = map_path + "configurations/" + map_name
 
-        rospy.logdebug("Saving map with map_name '" + map_name + "' and map_path '" + map_path + "'")
+        shutil.rmtree(full_map_path, ignore_errors=True)
+        shutil.rmtree(map_path + 'config', ignore_errors=True)
+
+        os.makedirs(full_map_path)
+        subprocess.call(['ln', '-s', full_map_path, map_path + 'config'])
+
+        rospy.logerr("Saving map: " + full_map_path)
 
         # Save map (image and meta-data).
         filename = 'submap_0'
@@ -60,7 +71,7 @@ class MapsManagerService():
         # Update /mmap/numberOfSubMaps parameter
         # [from saverFunctions::configSaver]
         rospy.set_param('/mmap/numberOfSubMaps', 1)
-        map_data_file = os.path.join(map_path+map_name+'/', 'mmap.yaml')
+        map_data_file = os.path.join(full_map_path + '/', 'mmap.yaml')
         if rospy.has_param('/mmap'):
             rosparam.dump_params(map_data_file, '/mmap')
         else:
@@ -72,12 +83,12 @@ class MapsManagerService():
 
         # Move map to maps folder
         # (this is required to have the image relative path in map.yaml):
-        shutil.move(filename + '.pgm', map_path+map_name)
-        shutil.move(filename + '.yaml',map_path+map_name+'/map.yaml')
+        shutil.move(filename + '.pgm', full_map_path)
+        shutil.move(filename + '.yaml',full_map_path + '/map.yaml')
 
         # Create nice map
-        shutil.copyfile(os.path.join(map_path+map_name, 'submap_0.pgm'), os.path.join(map_path+map_name, 'map.pgm'))
-        with open(os.path.join(map_path+map_name, 'transformation.xml'), 'w') as transf:
+        shutil.copyfile(os.path.join(full_map_path, 'submap_0.pgm'), os.path.join(full_map_path, 'map.pgm'))
+        with open(os.path.join(full_map_path, 'transformation.xml'), 'w') as transf:
             transf.write(DEFAULT_TRANSFORMATION)
 
         # Set permisions
