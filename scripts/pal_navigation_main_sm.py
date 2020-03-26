@@ -55,12 +55,11 @@ class MapsManagerService():
             map_name = time.strftime('%F_%H%M%S', timestamp)
 
         full_map_path = map_path + "configurations/" + map_name
-        symlink_path = map_path + 'config'
+        short_map_path = map_path + 'config'
 
         shutil.rmtree(full_map_path, ignore_errors=True)
-        if os.path.exists(symlink_path):
-            os.unlink(symlink_path)
-
+        subprocess.call(['rm', '-rf', short_map_path])
+        
         os.makedirs(full_map_path)
         subprocess.call(['ln', '-s', full_map_path, map_path + 'config'])
 
