@@ -45,19 +45,19 @@ fi
 
 if [ $# -lt 7 ]; then
   MULTI="false"
-  TF_PREFIX=""
+  ROBOT_NAMESPACE=""
 else 
   if [ "$7" = "true" ]; then
     if [ $# -lt 8 ]; then
-      echo "If MULTI is true I need the tf_prefix"
+      echo "If MULTI is true I need the robot_namespace"
       exit 1
     else
       MULTI="true"
-      TF_PREFIX=$8
+      ROBOT_NAMESPACE=$8
     fi
   else 
     MULTI="false"
-    TF_PREFIX=""
+    ROBOT_NAMESPACE=""
   fi
 fi
 
@@ -75,7 +75,7 @@ if [ ! -f "$HOME/.pal/pose.yaml" ]; then
 fi
 
 # Run localization/mapping
-roslaunch ${ROBOT}_2dnav_gazebo $STATE.launch localization:=$LOCALIZATION mapping:=$MAPPING map:=$MAP multiple:=$MULTI tf_prefix:=$TF_PREFIX
+roslaunch ${ROBOT}_2dnav_gazebo $STATE.launch localization:=$LOCALIZATION mapping:=$MAPPING map:=$MAP multiple:=$MULTI robot_namespace:=$ROBOT_NAMESPACE
 
 
 
