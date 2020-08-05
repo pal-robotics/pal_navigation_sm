@@ -3,7 +3,7 @@
   <arg name="map"        default=""/>
   <arg name="symlink"    default=""/>
   <arg name="multiple" default="false"/>
-  <arg name="tf_prefix" default=""/>
+  <arg name="robot_namespace" default=""/>
 
   <arg name="octomap"    default="false"/>
 
