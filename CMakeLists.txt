@@ -9,6 +9,9 @@ catkin_package()
 
 install(
   PROGRAMS
+    scripts/base_maps_symlink.sh
+    scripts/cp_maps_to_home.sh
+    scripts/cp_pose_to_home.sh
     scripts/map_setup.py
     scripts/pal_navigation_main_sm.py
     scripts/navigation.sh
