@@ -43,17 +43,17 @@ fi
 #  rm -rf $MAP
 #fi
 
-if [ $# -lt 7 ]; then
+if [ $# -lt 10 ]; then
   MULTI="false"
   ROBOT_NAMESPACE=""
 else 
-  if [ "$7" = "true" ]; then
-    if [ $# -lt 8 ]; then
+  if [ "$10" = "true" ]; then
+    if [ $# -lt 11 ]; then
       echo "If MULTI is true I need the robot_namespace"
       exit 1
     else
       MULTI="true"
-      ROBOT_NAMESPACE=$8
+      ROBOT_NAMESPACE=$11
     fi
   else 
     MULTI="false"
