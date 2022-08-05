@@ -7,7 +7,7 @@
 
 # Check parameters:
 if [ $# -lt 1 ]; then
-  echo "Usage: $0 <robot> [<state>] [<localization method>] [<mapping method>] [<map>] [<octomap>]"
+  echo "Usage: $0 <robot> [<state>] [<localization method>] [<mapping method>] [<map>] [<octomap>] [<scan_topic>] [<laser_model>]"
   echo "Check if the $HOME/.pal folder is availabe and creates it if needed"
   echo "before launching navigation."
   exit 1
@@ -39,9 +39,23 @@ else
   MAP=$5
 fi
 
-#if [ -d "$MAP" -a "$STATE" = "mapping" ]; then
-#  rm -rf $MAP
-#fi
+if [ $# -lt 6 ]; then
+  OCTOMAP=false
+else
+  OCTOMAP=$6
+fi
+
+if [ $# -lt 7 ]; then
+  SCAN_TOPIC=rgbd_scan
+else
+  SCAN_TOPIC=$7
+fi
+
+if [ $# -lt 8 ]; then
+  LASER_MODEL=false
+else
+  LASER_MODEL=$8
+fi
 
 if [ $# -lt 10 ]; then
   MULTI="false"
@@ -63,19 +77,30 @@ fi
 
 # Ensure target directory exists
 if [ ! -d "$MAP" ]; then
-  mkdir -p $MAP
+  echo "Warning: Target path is not a directory: $MAP."
+
+  PKG=`echo $MAP | awk '{ n=split($0, s, "/"); for (i=1; i<=n; i++) { if (index(s[i], "_maps") != 0) { print s[i] } } }'`
+  rosrun pal_navigation_sm cp_maps_to_home.sh $PKG
   if [ $? -ne 0 ]; then
-   echo "Error: Failed to create path $MAP"
+    echo "Error: Failed to copy maps from $PKG to $HOME/.pal."
     exit 3
   fi
 fi
 
+# Ensure pose file exists
 if [ ! -f "$HOME/.pal/pose.yaml" ]; then
-    rosrun pal_navigation_sm cp_pose_to_home.sh
+  rosrun pal_navigation_sm cp_pose_to_home.sh
+  if [ $? -ne 0 ]; then
+    echo "Error: Failed to copy pose to $HOME/.pal."
+    exit 3
+  fi
+fi
+
+# Add / to namespace if not empty
+if [ -n "$NS" ]; then
+  NS="$NS"/
 fi
 
 # Run localization/mapping
-roslaunch ${ROBOT}_2dnav_gazebo $STATE.launch localization:=$LOCALIZATION mapping:=$MAPPING map:=$MAP multiple:=$MULTI robot_namespace:=$ROBOT_NAMESPACE
-
-
+roslaunch ${ROBOT}_2dnav_gazebo $STATE.launch localization:=$LOCALIZATION mapping:=$MAPPING map:=$MAP octomap:=$OCTOMAP multiple:=$MULTI robot_namespace:=$ROBOT_NAMESPACE scan_topic:=$SCAN_TOPIC laser_model:=$LASER_MODEL
 

@@ -2,8 +2,9 @@
 <launch>
 
   <arg name="state"  default="localization"/> <!-- localization, mapping -->
-  <arg name="config" default=""/>
+  <arg name="config"/>
 
+  <arg name="file"      default="$(env HOME)/.pal/pose.yaml"/>
   <arg name="frequency" default="1.0"/>
   <arg name="base_frame" default="/base_footprint"/>
   <arg name="map_frame"  default="/map"/>
