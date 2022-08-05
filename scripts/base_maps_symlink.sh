@@ -7,13 +7,6 @@ set -e
 
 maps_link=$HOME/.pal/maps
 
-# robots do not have this param
-if rosparam get /use_sim_time; then
-    is_simulation=`rosparam get /use_sim_time`;
-else
-    is_simulation=false
-fi
-
 # Ensure we are not creating a recursive symlink
 # This is important since often <robot>_maps/config may be used as path.
 abspath() {
@@ -39,21 +32,19 @@ if [ ! -d "$1" ]; then
 fi
 
 # If not simulation, create a symlink $HOME/.pal/maps pointing to $HOME/.pal/<current_robot>_maps
-if [ "$is_simulation" = false ]; then
-  if [ -e "$maps_link" ]; then
-    if [ ! -h "$maps_link" ]; then
-      echo "Error: Path is not a symlink: $maps_link"
-      exit 2
-    fi
-
-    if [ "`abspath $maps_link`" != "`abspath $S1`" ]; then
-      echo "Warning: link is not pointing to $1, updating"
-      unlink "$maps_link"
-    fi
+if [ -e "$maps_link" ]; then
+  if [ ! -h "$maps_link" ]; then
+    echo "Error: Path is not a symlink: $maps_link"
+    exit 2
   fi
 
-  # Create the new maps symlink!
-  ln -s "$1" "$maps_link"
+  if [ "`abspath $maps_link`" != "`abspath $S1`" ]; then
+    echo "Warning: link is not pointing to $1, updating"
+    unlink "$maps_link"
+  fi
 fi
+
+# Create the new maps symlink!
+ln -s "$1" "$maps_link"
 
 echo "Done."
