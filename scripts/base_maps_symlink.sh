@@ -5,7 +5,7 @@
 
 set -e
 
-maps_link=$HOME/.pal/maps
+MAPS_LINK=$HOME/.pal/maps
 
 # Ensure we are not creating a recursive symlink
 # This is important since often <robot>_maps/config may be used as path.
@@ -31,20 +31,20 @@ if [ ! -d "$1" ]; then
   fi
 fi
 
-# If not simulation, create a symlink $HOME/.pal/maps pointing to $HOME/.pal/<current_robot>_maps
-if [ -e "$maps_link" ]; then
-  if [ ! -h "$maps_link" ]; then
-    echo "Error: Path is not a symlink: $maps_link"
+# Create a symlink $HOME/.pal/maps pointing to $HOME/.pal/<current_robot>_maps
+if [ -e "$MAPS_LINK" ]; then
+  if [ ! -h "$MAPS_LINK" ]; then
+    echo "Error: Path is not a symlink: $MAPS_LINK"
     exit 2
   fi
 
-  if [ "`abspath $maps_link`" != "`abspath $S1`" ]; then
+  if [ "`abspath $MAPS_LINK`" != "`abspath $S1`" ]; then
     echo "Warning: link is not pointing to $1, updating"
-    unlink "$maps_link"
+    unlink "$MAPS_LINK"
   fi
 fi
 
 # Create the new maps symlink!
-ln -s "$1" "$maps_link"
+ln -s "$1" "$MAPS_LINK"
 
 echo "Done."
