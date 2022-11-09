@@ -7,7 +7,7 @@
 
 # Check parameters:
 if [ $# -lt 1 ]; then
-  echo "Usage: $0 <robot> [<state>] [<localization method>] [<mapping method>] [<map>] [<octomap>] [<scan_topic>] [<laser_model>]"
+  echo "Usage: $0 <robot> [<state>] [<localization method>] [<mapping method>] [<map>] [<scan_topic>] [<laser_model>]"
   echo "Check if the $HOME/.pal folder is availabe and creates it if needed"
   echo "before launching navigation."
   exit 1
@@ -40,34 +40,28 @@ else
 fi
 
 if [ $# -lt 6 ]; then
-  OCTOMAP=false
+  SCAN_TOPIC=rgbd_scan
 else
-  OCTOMAP=$6
+  SCAN_TOPIC=$6
 fi
 
 if [ $# -lt 7 ]; then
-  SCAN_TOPIC=rgbd_scan
-else
-  SCAN_TOPIC=$7
-fi
-
-if [ $# -lt 8 ]; then
   LASER_MODEL=false
 else
-  LASER_MODEL=$8
+  LASER_MODEL=$7
 fi
 
-if [ $# -lt 10 ]; then
+if [ $# -lt 9 ]; then
   MULTI="false"
   ROBOT_NAMESPACE=""
 else 
-  if [ "$10" = "true" ]; then
-    if [ $# -lt 11 ]; then
+  if [ "$9" = "true" ]; then
+    if [ $# -lt 10 ]; then
       echo "If MULTI is true I need the robot_namespace"
       exit 1
     else
       MULTI="true"
-      ROBOT_NAMESPACE=$11
+      ROBOT_NAMESPACE=$10
     fi
   else 
     MULTI="false"
@@ -102,5 +96,5 @@ if [ -n "$NS" ]; then
 fi
 
 # Run localization/mapping
-roslaunch ${ROBOT}_2dnav_gazebo $STATE.launch localization:=$LOCALIZATION mapping:=$MAPPING map:=$MAP octomap:=$OCTOMAP multiple:=$MULTI robot_namespace:=$ROBOT_NAMESPACE scan_topic:=$SCAN_TOPIC laser_model:=$LASER_MODEL
+roslaunch ${ROBOT}_2dnav_gazebo $STATE.launch localization:=$LOCALIZATION mapping:=$MAPPING map:=$MAP multiple:=$MULTI robot_namespace:=$ROBOT_NAMESPACE scan_topic:=$SCAN_TOPIC laser_model:=$LASER_MODEL
 
