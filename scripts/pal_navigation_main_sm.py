@@ -93,7 +93,7 @@ class MapsManagerService():
             transf.write(DEFAULT_TRANSFORMATION)
 
         # Set permisions
-        self._chmod(map_path, 0777)
+        self._chmod(map_path, 0o777)
 
         # Save initial pose of the robot in the map
         rospack = rospkg.RosPack()
