@@ -3,10 +3,13 @@
 
   <arg name="state"  default="localization"/> <!-- localization, mapping -->
   <arg name="config" default=""/>
-
   <arg name="frequency" default="1.0"/>
   <arg name="base_frame" default="/base_footprint"/>
   <arg name="map_frame"  default="/map"/>
+  <arg name="multiple"        default="false"/>
+  <arg name="robot_namespace" default=""/>
+  <arg name="is_sim"          default="true"/>
+
 
   <!-- Pal Navigation SM SMACH -->
   <node pkg ="pal_navigation_sm"
